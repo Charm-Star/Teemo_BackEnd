@@ -1,4 +1,4 @@
-package com.example.teemo_backend.Configuration.Domain.Dto;
+package com.example.teemo_backend.Domain.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class UserDto {
     private String name;
     private int age;

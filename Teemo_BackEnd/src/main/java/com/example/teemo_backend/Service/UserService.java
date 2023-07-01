@@ -5,9 +5,8 @@ import com.example.teemo_backend.Exception.AppException;
 import com.example.teemo_backend.Exception.ErrorCode;
 import com.example.teemo_backend.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.teemo_backend.Domain.Dto.User;
+import com.example.teemo_backend.Domain.Entity.User;
 
 
 @Service
@@ -31,4 +30,5 @@ public class UserService {
 
         return "succcess";
     }
+
 }

@@ -2,11 +2,11 @@ package com.example.teemo_backend.Domain.Dto;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@Getter
+@Data
 @NoArgsConstructor
 public class UserJoinRequest {
     private String userEmail;

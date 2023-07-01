@@ -1,6 +1,6 @@
 package com.example.teemo_backend.Repository;
 
-import com.example.teemo_backend.Domain.Dto.User;
+import com.example.teemo_backend.Domain.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

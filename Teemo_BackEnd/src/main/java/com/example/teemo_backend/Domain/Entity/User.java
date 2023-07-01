@@ -1,4 +1,4 @@
-package com.example.teemo_backend.Domain.Dto;
+package com.example.teemo_backend.Domain.Entity;
 
 
 import jakarta.persistence.Entity;
