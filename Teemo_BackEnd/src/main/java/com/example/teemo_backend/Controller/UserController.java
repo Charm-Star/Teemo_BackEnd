@@ -8,11 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/user")
 public class UserController {
+
 
     private final UserService userService;
 
@@ -29,7 +32,8 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody UserLoginRequest dto){
 
 
-        String token  =  userService.login(dto.getEmail() , dto.getPassword());
+
+        String token  =  userService.login(dto.getUserEmail() , dto.getPassword());
 
 
         return ResponseEntity.ok().body(token);

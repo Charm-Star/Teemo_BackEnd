@@ -1,37 +1,51 @@
 package com.example.teemo_backend.Config;
 
-import com.example.teemo_backend.Config.JwtFilter;
-import com.example.teemo_backend.Service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig  {
+public class SecurityConfig {
 
-    private final UserService userService;
-    @Value("${jwt.token.secret}")
-    private String secretKey;
+    private final ObjectMapper mapper;
 
 
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // CSRF 설정 Disable
         http
-                .csrf(csrf->csrf.disable())
-                .httpBasic(httpBasicConfigurer->httpBasicConfigurer.disable())
-                .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeRequests()
-                .requestMatchers("user/join" , "user/login").permitAll()
+                .httpBasic().disable()
+                .csrf().disable()
+                .cors().disable();
+
+        http
+
+                .sessionManagement()
+                .sessionCreationPolicy(STATELESS)
                 .and()
-                .addFilterBefore(
-                        new JwtFilter(userService,secretKey),
-                        UsernamePasswordAuthenticationFilter.class
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+
+
                 );
+
+
+
+        return http.build();
     }
+
+
+
 }

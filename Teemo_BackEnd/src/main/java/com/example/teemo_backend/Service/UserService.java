@@ -6,11 +6,7 @@ import com.example.teemo_backend.Exception.ErrorCode;
 import com.example.teemo_backend.Repository.UserRepository;
 import com.example.teemo_backend.Utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-<<<<<<< HEAD
-=======
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
->>>>>>> 945ebc037af8ecbf2f74dcca55bcfa4c134705f9
 import org.springframework.stereotype.Service;
 import com.example.teemo_backend.Domain.Entity.User;
 
@@ -40,19 +36,22 @@ public class UserService {
 
         return "succcess";
     }
-<<<<<<< HEAD
 
-=======
     public String login(String email, String password){
 
 
         //email 없음
         User findUser= userRepository.findByEmail(email)
                 .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
+
+        System.out.println(findUser.getEmail());
+
         //password 틀림
         if(!findUser.getPassword().equals(password)){
             throw new AppException(ErrorCode.INVALID_PASSWORD,"비밀번호가 잘못입력되었습니다");
         }
+
+
 
         // 토큰 발행
         String token = JwtTokenUtil.create(findUser.getEmail(),key,expireTimeToMs);
@@ -60,5 +59,5 @@ public class UserService {
 
         return token;
     }
->>>>>>> 945ebc037af8ecbf2f74dcca55bcfa4c134705f9
+
 }
