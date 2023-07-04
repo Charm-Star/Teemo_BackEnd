@@ -1,6 +1,7 @@
 package com.example.teemo_backend.Controller;
 
 
+import com.example.teemo_backend.Domain.Dto.JwtToken;
 import com.example.teemo_backend.Domain.Dto.UserJoinRequest;
 import com.example.teemo_backend.Domain.Dto.UserLoginRequest;
 import com.example.teemo_backend.Service.UserService;
@@ -29,11 +30,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest dto){
+    public ResponseEntity<JwtToken> login(@RequestBody UserLoginRequest dto){
 
 
 
-        String token  =  userService.login(dto.getUserEmail() , dto.getPassword());
+        JwtToken token  =  userService.login(dto.getUserEmail() , dto.getPassword());
 
 
         return ResponseEntity.ok().body(token);

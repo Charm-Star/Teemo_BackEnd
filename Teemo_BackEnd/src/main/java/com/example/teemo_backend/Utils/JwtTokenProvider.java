@@ -1,9 +1,11 @@
 package com.example.teemo_backend.Utils;
 
+import com.example.teemo_backend.Domain.Dto.JwtToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,24 +25,36 @@ public class JwtTokenProvider {
 
     private final Key key;
 
+
     public JwtTokenProvider(@Value("${jwt.token.secret}") String secretKey) {
         byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public String generateToken(Authentication authentication) {
+    public JwtToken generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-
         //Access Token 생성
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
-                .signWith(SignatureAlgorithm.HS256,key)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        //Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 60 * 36))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return JwtToken.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -63,9 +77,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
 
-
-
-
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 
             return true;
         }catch (SecurityException | MalformedJwtException e) {
