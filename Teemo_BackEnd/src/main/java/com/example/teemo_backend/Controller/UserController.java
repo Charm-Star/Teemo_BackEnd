@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -24,20 +22,24 @@ public class UserController {
     @PostMapping(value = "/join")
     public ResponseEntity<String> join(@RequestBody UserJoinRequest dto){
 
-
-        userService.join(dto.getUserEmail() , dto.getPassword());
+        userService.join(dto);
         return ResponseEntity.ok().body("회원가입 성공");
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<JwtToken> login(@RequestBody UserLoginRequest dto){
 
-
-
         JwtToken token  =  userService.login(dto.getUserEmail() , dto.getPassword());
 
-
         return ResponseEntity.ok().body(token);
+    }
+
+    @GetMapping(value = "/check-nickname-duplicate")
+    public ResponseEntity<String> checkNickname(@RequestBody String nickname){
+
+        String result =  userService.checkNickname(nickname);
+
+        return ResponseEntity.ok().body(result);
     }
 
 }

@@ -11,12 +11,6 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private String name;
     private int age;
+    private  String nickname;
 
-    public int getAge() {
-        return age;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

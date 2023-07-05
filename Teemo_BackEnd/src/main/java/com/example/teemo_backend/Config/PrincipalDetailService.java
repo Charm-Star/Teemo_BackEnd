@@ -1,6 +1,6 @@
 package com.example.teemo_backend.Config;
 
-import com.example.teemo_backend.Domain.Dto.SessionUser;
+import com.example.teemo_backend.Domain.Dto.CostomUserDetail;
 import com.example.teemo_backend.Domain.Entity.User;
 import com.example.teemo_backend.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +24,6 @@ public class PrincipalDetailService implements UserDetailsService {
                 .orElseThrow(() -> {
                     return new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다");
                 });
-        return new SessionUser(principal);
+        return new CostomUserDetail(principal);
     }
 }

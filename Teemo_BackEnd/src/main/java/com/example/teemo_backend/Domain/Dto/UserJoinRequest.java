@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class UserJoinRequest {
     private String userEmail;
     private String password;
+    private String nickname;
 
 
 }

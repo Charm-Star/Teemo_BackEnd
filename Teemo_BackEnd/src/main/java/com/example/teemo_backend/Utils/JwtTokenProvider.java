@@ -31,7 +31,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public JwtToken generateToken(Authentication authentication) {
+    public JwtToken generateToken(Authentication authentication,String email) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -40,6 +40,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .claim("email",email)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

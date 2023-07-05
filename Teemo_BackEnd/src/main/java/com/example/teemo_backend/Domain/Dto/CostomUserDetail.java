@@ -7,10 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SessionUser implements UserDetails {
+public class CostomUserDetail implements UserDetails {
 
     private User user;
-    public SessionUser(User user) {
+    public CostomUserDetail(User user) {
         this.user = user;
     }
 
