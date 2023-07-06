@@ -8,6 +8,7 @@ import com.example.teemo_backend.Exception.AppException;
 import com.example.teemo_backend.Exception.ErrorCode;
 import com.example.teemo_backend.Repository.UserRepository;
 import com.example.teemo_backend.Utils.JwtTokenProvider;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,8 @@ public class UserService {
     @Value("${jwt.token.secret}")
     private String key ;
     private long expireTimeToMs = 1000*60*60l; // 토큰 expireTime 1시간
+
+    @Transactional
     public String join(UserJoinRequest dto){
 
         // 이메일 중복 체크
@@ -87,7 +90,22 @@ public class UserService {
         return "사용가능한 닉네임입니다";
     }
 
-    public String checkPassword(String email,String password){
+//    public String checkPassword(String email,String password){
+//
+//        User findUser= userRepository.findByEmail(email)
+//                .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
+//
+//
+//        if (true != encoder.matches(password,findUser.getPassword())) {
+//            throw new AppException(ErrorCode.INVALID_PASSWORD,"비밀번호가 일치하지 않음");
+//        }
+//
+//        return "비밀번호 일치";
+//    }
+
+    public boolean checkPassword(String token,String password){
+
+        String email = jwtTokenProvider.extractEmailFromJWT(token);
 
         User findUser= userRepository.findByEmail(email)
                 .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
@@ -97,7 +115,24 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_PASSWORD,"비밀번호가 일치하지 않음");
         }
 
-        return "비밀번호 일치";
+        return true;
+    }
+
+    @Transactional
+    public String changePassword(String token,String password){
+
+        String email = jwtTokenProvider.extractEmailFromJWT(token);
+
+        User findUser= userRepository.findByEmail(email)
+                .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
+
+
+        String enPw = encoder.encode(password);
+
+
+        findUser.setPassword(enPw);
+
+        return "비밀번호가 변경되었습니다";
     }
 
 }

@@ -100,4 +100,26 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+    public  String extractEmailFromJWT(String jwt) {
+        String email = null;
+
+        try {
+
+            // 아래 코드 2 개 집에서 태스트 해보기
+            Jws<Claims> w = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+            Claims claim = (Claims) w.getBody();
+            String email2 = claim.get("email",String.class);
+
+
+            Jwt<?, ?> parsedJwt = Jwts.parser().parse(jwt);
+            Claims claims = (Claims) parsedJwt.getBody();
+            email = claims.get("email", String.class);
+        } catch (Exception e) {
+            // 예외 처리
+            e.printStackTrace();
+        }
+
+        return email;
+    }
 }
