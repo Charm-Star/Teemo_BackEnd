@@ -2,6 +2,7 @@ package com.example.teemo_backend.Service;
 
 
 import com.example.teemo_backend.Config.PrincipalDetailService;
+import com.example.teemo_backend.Domain.Dto.ChangePwRequest;
 import com.example.teemo_backend.Domain.Dto.JwtToken;
 import com.example.teemo_backend.Domain.Dto.UserJoinRequest;
 import com.example.teemo_backend.Exception.AppException;
@@ -90,49 +91,32 @@ public class UserService {
         return "사용가능한 닉네임입니다";
     }
 
-//    public String checkPassword(String email,String password){
-//
-//        User findUser= userRepository.findByEmail(email)
-//                .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
-//
-//
-//        if (true != encoder.matches(password,findUser.getPassword())) {
-//            throw new AppException(ErrorCode.INVALID_PASSWORD,"비밀번호가 일치하지 않음");
-//        }
-//
-//        return "비밀번호 일치";
-//    }
 
-    public boolean checkPassword(String token,String password){
+    @Transactional
+    public User changePassword(String token, ChangePwRequest changePwRequest){
 
         String email = jwtTokenProvider.extractEmailFromJWT(token);
+        String ExPassword = changePwRequest.getExPassword();
+        String newPassword = changePwRequest.getNewPassword();
+        String newPasswordCheck = changePwRequest.getNewPasswordCheck();
 
         User findUser= userRepository.findByEmail(email)
                 .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
 
-
-        if (true != encoder.matches(password,findUser.getPassword())) {
+        if (true != encoder.matches(ExPassword,findUser.getPassword())) {
             throw new AppException(ErrorCode.INVALID_PASSWORD,"비밀번호가 일치하지 않음");
         }
 
-        return true;
-    }
+        if(!newPassword.equals(newPasswordCheck)){
+            throw new AppException(ErrorCode.PASSWORD_NOT_ASSOCIATE,"새로운 비밀번호가 일치하지 않음");
+        }
 
-    @Transactional
-    public String changePassword(String token,String password){
+        String enPw = encoder.encode(newPassword);
 
-        String email = jwtTokenProvider.extractEmailFromJWT(token);
-
-        User findUser= userRepository.findByEmail(email)
-                .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
-
-
-        String enPw = encoder.encode(password);
-
-
+        // 확인 해보기
         findUser.setPassword(enPw);
 
-        return "비밀번호가 변경되었습니다";
+        return findUser;
     }
 
 }

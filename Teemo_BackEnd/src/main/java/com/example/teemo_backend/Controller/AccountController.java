@@ -1,6 +1,7 @@
 package com.example.teemo_backend.Controller;
 
 
+import com.example.teemo_backend.Domain.Dto.ChangePwRequest;
 import com.example.teemo_backend.Service.UserService;
 import com.example.teemo_backend.Utils.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,23 +18,15 @@ public class AccountController {
 
 
 
-    //비밀번호 일치 확인
-    @PostMapping(value = "/pw-check")
-    public ResponseEntity<String> checkPassword(HttpServletRequest request,@RequestBody String password){
 
-        String token = request.getHeader("Authorization");
-
-        userService.checkPassword(token,password);
-
-        return ResponseEntity.ok().body("비밀번호 일치");
-    }
 
     //비밀번호 변경
     @PatchMapping(value = "/pw-change")
-    public ResponseEntity<String> changePassword(HttpServletRequest request,@RequestBody String password){
+    public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody ChangePwRequest ChangePwRequest){
 
         String token  = request.getHeader("Authorization");
-        userService.changePassword(token,password);
+
+        userService.changePassword(token,ChangePwRequest);
 
 
         return ResponseEntity.ok().body("비밀번호가 변경되었습니다");
