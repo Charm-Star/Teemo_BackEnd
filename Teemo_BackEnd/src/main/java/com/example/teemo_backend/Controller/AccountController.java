@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/account")
 public class AccountController {
 
-    UserService userService;
-
-
-
+    private final UserService userService ;
 
 
     //비밀번호 변경

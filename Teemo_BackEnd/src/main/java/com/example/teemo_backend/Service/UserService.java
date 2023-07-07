@@ -76,7 +76,7 @@ public class UserService {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        JwtToken token = jwtTokenProvider.generateToken(authentication,email);
+        JwtToken token = jwtTokenProvider.generateToken(authentication,findUser.getEmail(),findUser.getId());
 
         return token;
     }

@@ -19,7 +19,7 @@ public class CostomUserDetail implements UserDetails {
         Collection<GrantedAuthority> collections = new ArrayList<>();
 
         collections.add(() -> {
-            return "ROLE_" + user.getEmail();
+            return "ROLE_USER"; // 추후 수정
         });
 
         return collections;

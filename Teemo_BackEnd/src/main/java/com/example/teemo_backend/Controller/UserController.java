@@ -34,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok().body(token);
     }
 
-    @GetMapping(value = "/check-nickname-duplicate")
+    @GetMapping(value = "/nickname-duplicate")
     public ResponseEntity<String> checkNickname(@RequestBody String nickname){
 
         String result =  userService.checkNickname(nickname);

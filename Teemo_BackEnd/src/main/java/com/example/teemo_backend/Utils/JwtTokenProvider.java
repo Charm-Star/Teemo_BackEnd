@@ -31,7 +31,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public JwtToken generateToken(Authentication authentication,String email) {
+    public JwtToken generateToken(Authentication authentication,String email,long id) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -41,6 +41,7 @@ public class JwtTokenProvider {
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
                 .claim("email",email)
+                .claim("id",id)
                 .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -101,20 +102,18 @@ public class JwtTokenProvider {
         }
     }
 
-    public  String extractEmailFromJWT(String jwt) {
+    public  String extractEmailFromJWT(String bearerJwt) {
         String email = null;
+        String jwt = bearerJwt.substring(7);
 
         try {
 
-            // 아래 코드 2 개 집에서 태스트 해보기
             Jws<Claims> w = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-            Claims claim = (Claims) w.getBody();
-            String email2 = claim.get("email",String.class);
+            Claims claim =  w.getBody();
+            email = claim.get("email",String.class);
 
 
-            Jwt<?, ?> parsedJwt = Jwts.parser().parse(jwt);
-            Claims claims = (Claims) parsedJwt.getBody();
-            email = claims.get("email", String.class);
+
         } catch (Exception e) {
             // 예외 처리
             e.printStackTrace();
