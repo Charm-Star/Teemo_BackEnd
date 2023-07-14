@@ -35,8 +35,6 @@ public class UserService {
     private final PrincipalDetailService PrincipalDetailService;
     private final BCryptPasswordEncoder encoder;
 
-
-
     @Value("${jwt.token.secret}")
     private String key ;
     private long expireTimeToMs = 1000*60*60l; // 토큰 expireTime 1시간
