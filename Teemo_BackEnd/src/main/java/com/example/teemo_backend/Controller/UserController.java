@@ -1,6 +1,7 @@
 package com.example.teemo_backend.Controller;
 
 
+import com.example.teemo_backend.Service.ArticleService;
 import com.example.teemo_backend.Domain.Dto.JwtToken;
 import com.example.teemo_backend.Domain.Dto.UserJoinRequest;
 import com.example.teemo_backend.Domain.Dto.UserLoginRequest;
@@ -17,6 +18,7 @@ public class UserController {
 
 
     private final UserService userService;
+    private final ArticleService cawlingService;
 
 
     @PostMapping(value = "/join")
@@ -41,5 +43,7 @@ public class UserController {
 
         return ResponseEntity.ok().body(result);
     }
+
+
 
 }

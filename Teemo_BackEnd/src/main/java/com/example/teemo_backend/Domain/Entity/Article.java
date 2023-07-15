@@ -6,19 +6,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.jsoup.nodes.Element;
 
 @Entity
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String email;
-    private String password;
-    private String nickname;
+
+    private String url;
+    private String title;
+    private String artContent;
+    private String imgUrl;
+    private int week;
+    private int month;
+    private int year;
 
 
 
