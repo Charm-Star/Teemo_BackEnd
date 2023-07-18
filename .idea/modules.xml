@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Teemo_BackEnd.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Teemo_BackEnd.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Teemo_BackEnd.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Teemo_BackEnd.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.example.Teemo_BackEnd.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.example.Teemo_BackEnd.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/공모전.iml" filepath="$PROJECT_DIR$/.idea/공모전.iml" />
     </modules>

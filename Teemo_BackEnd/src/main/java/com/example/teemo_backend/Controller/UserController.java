@@ -18,7 +18,7 @@ public class UserController {
 
 
     private final UserService userService;
-    private final ArticleService cawlingService;
+
 
 
     @PostMapping(value = "/join")
