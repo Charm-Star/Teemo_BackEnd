@@ -1,6 +1,8 @@
 package com.example.teemo_backend.Utils;
 
 import com.example.teemo_backend.Domain.Dto.JwtToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,8 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
+    private static Key key;
+    ///https://dev-yujji.tistory.com/63
 
 
     public JwtTokenProvider(@Value("${jwt.token.secret}") String secretKey) {
@@ -31,7 +34,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public JwtToken generateToken(Authentication authentication,String email,long id) {
+    public  JwtToken generateToken(Authentication authentication,String email,long id) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -76,7 +79,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String token) {
+    public static boolean validateToken(String token) {
         try {
 
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -121,4 +124,20 @@ public class JwtTokenProvider {
 
         return email;
     }
+    public static HashMap<String, String> getPayloadByToken(String token) {
+        try {
+            String[] splitJwt = token.split("\\.");
+
+            Base64.Decoder decoder = Base64.getDecoder();
+            String payload = new String(decoder.decode(splitJwt[1] .getBytes()));
+
+            return new ObjectMapper().readValue(payload, HashMap.class);
+        } catch (JsonProcessingException e) {
+
+            return null;
+        }
+    }
+
+
+
 }
