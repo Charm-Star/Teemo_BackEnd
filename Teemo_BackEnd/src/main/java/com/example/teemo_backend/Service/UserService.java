@@ -4,11 +4,15 @@ package com.example.teemo_backend.Service;
 import com.example.teemo_backend.Config.PrincipalDetailService;
 import com.example.teemo_backend.Domain.Dto.ChangePwRequest;
 import com.example.teemo_backend.Domain.Dto.JwtToken;
+import com.example.teemo_backend.Domain.Dto.RefreshToken;
 import com.example.teemo_backend.Domain.Dto.UserJoinRequest;
 import com.example.teemo_backend.Exception.AppException;
 import com.example.teemo_backend.Exception.ErrorCode;
 import com.example.teemo_backend.Repository.UserRepository;
 import com.example.teemo_backend.Utils.JwtTokenProvider;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +25,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.teemo_backend.Domain.Entity.User;
+
+import java.util.HashMap;
+import java.util.Optional;
 
 
 @Slf4j
@@ -58,7 +65,6 @@ public class UserService {
     }
 
     public JwtToken login(String email, String password){
-
         //email 없음
         User findUser= userRepository.findByEmail(email)
                 .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
@@ -118,6 +124,49 @@ public class UserService {
         findUser.setPassword(enPw);
 
         return findUser;
+    }
+    public JwtToken reissueToken(HttpServletRequest request, HttpServletResponse response){
+        try {
+            String token = request.getHeader("Authorization");
+            // 만료된 Access Token을 디코딩하여 Payload 값을 가져옴
+            HashMap<String, String> payloadMap = JwtTokenProvider.getPayloadByToken(token);
+            String email = payloadMap.get("sub");
+            long id = Long.parseLong(payloadMap.get("id"));
+            // Redis에 저장된 Refresh Token을 찾고 만일 없다면 401 에러를 내려줍니다
+            Optional<RefreshToken> refreshToken = redisRepository.findByEmail(email);
+            refreshToken.orElseThrow(
+                    () -> new AppException(ErrorCode.JWT_REFRESH_TOKEN_MISSING,"")
+            );
+
+            // Refresh Token이 만료가 된 토큰인지 확인합니다
+            boolean isTokenValid = JwtTokenProvider.validateToken(refreshToken.get().getToken());
+
+            // Refresh Token이 만료가 되지 않은 경우
+            if(isTokenValid) {
+                Optional<User> member = userRepository.findByEmail(email);
+
+                if(member.isPresent()) {
+                    // Access Token과 Refresh Token을 둘 다 새로 발급하여 Refresh Token은 새로 Redis에 저장
+                    UserDetails sessionUser = PrincipalDetailService.loadUserByUsername(email);
+
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,sessionUser.getAuthorities());
+
+                    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+                    JwtToken jwtToken = jwtTokenProvider.generateToken(authentication,email,id);
+
+
+
+                    redisRepository.save(newRefreshToken);
+
+                    return jwtToken;
+                }
+            }
+        } catch(ExpiredJwtException e) {
+            // Refresh Token 만료 Exception
+            throw new AppException(ErrorCode.JWT_REFRESH_TOKEN_EXPIRED,"");
+        }
+        return null;
     }
 
 }
