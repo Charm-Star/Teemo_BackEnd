@@ -80,9 +80,12 @@ public class UserService {
     }
 
     public String checkNickname(String nickname) {
+        System.out.println(nickname);
 
         userRepository.findByNickname(nickname)
                 .ifPresent(user -> {
+                    System.out.println(user.getNickname());
+
                     throw new AppException(ErrorCode.NICKNAME_DUPLICATED, "이미 존재하는 닉네임");
                 });
 
