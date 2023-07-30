@@ -11,18 +11,17 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-public class production {
+public class Production {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long productionId;
-    private ConsumptionType consumptionType;
+    private String consumptionType;
     private Date date;
-    private Category category;
+    private String category;
     private String paymentMethod;
     private String client;
     private int amount;
     private  String memo;
-    @JoinColumn(name = "id",nullable = false)
     private long userId;
 
 

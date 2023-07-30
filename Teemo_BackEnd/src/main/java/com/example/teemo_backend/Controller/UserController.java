@@ -63,14 +63,14 @@ public class UserController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping(value = "/reissue")
-    public ResponseEntity<JwtToken> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        JwtToken jwtToken = userService.reissueToken( request,  response);
-
-
-        return ResponseEntity.ok().body(jwtToken);
-    }
+//    @GetMapping(value = "/reissue")
+//    public ResponseEntity<JwtToken> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//
+//        JwtToken jwtToken = userService.reissueToken( request,  response);
+//
+//
+//        return ResponseEntity.ok().body(jwtToken);
+//    }
 
 }
 

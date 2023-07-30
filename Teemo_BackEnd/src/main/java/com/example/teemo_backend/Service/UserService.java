@@ -125,48 +125,60 @@ public class UserService {
 
         return findUser;
     }
-    public JwtToken reissueToken(HttpServletRequest request, HttpServletResponse response){
-        try {
-            String token = request.getHeader("Authorization");
-            // 만료된 Access Token을 디코딩하여 Payload 값을 가져옴
-            HashMap<String, String> payloadMap = JwtTokenProvider.getPayloadByToken(token);
-            String email = payloadMap.get("sub");
-            long id = Long.parseLong(payloadMap.get("id"));
-            // Redis에 저장된 Refresh Token을 찾고 만일 없다면 401 에러를 내려줍니다
-            Optional<RefreshToken> refreshToken = redisRepository.findByEmail(email);
-            refreshToken.orElseThrow(
-                    () -> new AppException(ErrorCode.JWT_REFRESH_TOKEN_MISSING,"")
-            );
+    @Transactional
+    public User changeNickname(String email, String newNickname){
 
-            // Refresh Token이 만료가 된 토큰인지 확인합니다
-            boolean isTokenValid = JwtTokenProvider.validateToken(refreshToken.get().getToken());
+        User findUser= userRepository.findByEmail(email)
+                .orElseThrow(()->new AppException(ErrorCode.USEREMAIL_NOT_FOUND,email+"존재하지 않는 이메일"));
 
-            // Refresh Token이 만료가 되지 않은 경우
-            if(isTokenValid) {
-                Optional<User> member = userRepository.findByEmail(email);
-
-                if(member.isPresent()) {
-                    // Access Token과 Refresh Token을 둘 다 새로 발급하여 Refresh Token은 새로 Redis에 저장
-                    UserDetails sessionUser = PrincipalDetailService.loadUserByUsername(email);
-
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,sessionUser.getAuthorities());
-
-                    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-                    JwtToken jwtToken = jwtTokenProvider.generateToken(authentication,email,id);
+        findUser.setNickname(newNickname);
 
 
-
-                    redisRepository.save(newRefreshToken);
-
-                    return jwtToken;
-                }
-            }
-        } catch(ExpiredJwtException e) {
-            // Refresh Token 만료 Exception
-            throw new AppException(ErrorCode.JWT_REFRESH_TOKEN_EXPIRED,"");
-        }
-        return null;
+        return findUser;
     }
+
+//    public JwtToken reissueToken(HttpServletRequest request, HttpServletResponse response){
+//        try {
+//            String token = request.getHeader("Authorization");
+//            // 만료된 Access Token을 디코딩하여 Payload 값을 가져옴
+//            HashMap<String, String> payloadMap = JwtTokenProvider.getPayloadByToken(token);
+//            String email = payloadMap.get("sub");
+//            long id = Long.parseLong(payloadMap.get("id"));
+//            // Redis에 저장된 Refresh Token을 찾고 만일 없다면 401 에러를 내려줍니다
+//            Optional<RefreshToken> refreshToken = redisRepository.findByEmail(email);
+//            refreshToken.orElseThrow(
+//                    () -> new AppException(ErrorCode.JWT_REFRESH_TOKEN_MISSING,"")
+//            );
+//
+//            // Refresh Token이 만료가 된 토큰인지 확인합니다
+//            boolean isTokenValid = JwtTokenProvider.validateToken(refreshToken.get().getToken());
+//
+//            // Refresh Token이 만료가 되지 않은 경우
+//            if(isTokenValid) {
+//                Optional<User> member = userRepository.findByEmail(email);
+//
+//                if(member.isPresent()) {
+//                    // Access Token과 Refresh Token을 둘 다 새로 발급하여 Refresh Token은 새로 Redis에 저장
+//                    UserDetails sessionUser = PrincipalDetailService.loadUserByUsername(email);
+//
+//                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,sessionUser.getAuthorities());
+//
+//                    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//
+//                    JwtToken jwtToken = jwtTokenProvider.generateToken(authentication,email,id);
+//
+//
+//
+//                    redisRepository.save(newRefreshToken);
+//
+//                    return jwtToken;
+//                }
+//            }
+//        } catch(ExpiredJwtException e) {
+//            // Refresh Token 만료 Exception
+//            throw new AppException(ErrorCode.JWT_REFRESH_TOKEN_EXPIRED,"");
+//        }
+//        return null;
+//    }
 
 }

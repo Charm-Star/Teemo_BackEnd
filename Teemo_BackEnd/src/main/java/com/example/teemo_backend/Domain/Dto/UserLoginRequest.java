@@ -14,8 +14,8 @@ import lombok.NonNull;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserLoginRequest {
 
-    @NonNull
+
     private String userEmail;
-    @NonNull
+
     private String password;
 }

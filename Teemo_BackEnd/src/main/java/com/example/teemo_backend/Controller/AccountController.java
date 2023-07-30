@@ -1,6 +1,7 @@
 package com.example.teemo_backend.Controller;
 
 
+import com.example.teemo_backend.Domain.Dto.ChangeNicknameRequest;
 import com.example.teemo_backend.Domain.Dto.ChangePwRequest;
 import com.example.teemo_backend.Service.UserService;
 import com.example.teemo_backend.Utils.JwtTokenProvider;
@@ -15,6 +16,18 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final UserService userService ;
+
+
+    @PatchMapping(value = "/nickname")
+    public ResponseEntity<String> changeNickName(@RequestBody ChangeNicknameRequest dto){
+
+
+        userService.changeNickname(dto.getEmail(), dto.getNewNickname());
+
+
+
+        return ResponseEntity.ok().body("닉네임이 변경되었습니다");
+    }
 
 
     //비밀번호 변경
