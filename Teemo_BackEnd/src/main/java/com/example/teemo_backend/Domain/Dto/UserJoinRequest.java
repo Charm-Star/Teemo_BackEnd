@@ -11,7 +11,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserJoinRequest {
     @NonNull
     private String userEmail;

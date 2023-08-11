@@ -25,11 +25,4 @@ public class Production {
     private long userId;
 
 
-
-
-
-
-
-
-
 }

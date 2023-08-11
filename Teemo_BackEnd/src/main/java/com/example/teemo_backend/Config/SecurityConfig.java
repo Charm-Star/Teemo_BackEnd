@@ -5,6 +5,7 @@ import com.example.teemo_backend.Utils.JwtTokenProvider;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,7 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/user/**").permitAll()
-                        .requestMatchers("/swagger-ui/**","/swagger-resources/**","/v3/**","/production").permitAll()
+
+                        .requestMatchers("/swagger-ui/**","/swagger-resources/**","/v3/**","/board","/board/**","/account/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
