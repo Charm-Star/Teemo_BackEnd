@@ -13,7 +13,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class ChangePwRequest {
     @NonNull
-    private String ExPassword;
+    private String exPassword;
     @NonNull
     private String newPassword;
     @NonNull
